@@ -2,16 +2,31 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'C:\\Users\\UsEr\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
-        PIP = 'C:\\Users\\UsEr\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pip.exe'
+        PYTHON = 'C:\\Users\\Hanif\\AppData\\Local\\Programs\\Python\\Python310\\python.exe'
+        PIP = 'C:\\Users\\Hanif\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\pip.exe'
     }
 
     stages {
+        stage('Verify Python & pip') {
+            steps {
+                bat '''
+                    echo Checking Python and pip...
+                    "%PYTHON%" --version
+                    "%PIP%" --version
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 bat '''
                     echo Installing dependencies...
-                    "%PIP%" install -r requirements.txt
+                    if exist requirements.txt (
+                        "%PIP%" install -r requirements.txt
+                    ) else (
+                        echo requirements.txt NOT FOUND!
+                        exit /b 1
+                    )
                 '''
             }
         }
